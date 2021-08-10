@@ -4,22 +4,24 @@ import (
 	"fmt"
 	"log"
 
-	"main.go/GitService"
+	"main.go/Common"
+	"main.go/TrackingService"
 )
 
 func main() {
-	parameters, err := NewParameters()
+	parameters, err := Common.NewParameters()
 	if err != nil {
 		log.Fatal(err)
 	} else {
 		fmt.Println("parameters", parameters)
 	}
 
-	gitService := GitService.NewGitService(parameters.AzureDevOpsUri, parameters.RepositoryId, parameters.АuthorizationToken)
-	changes, err := gitService.GetChanges(parameters.CommitId)
+	trackService := TrackingService.NewTrackingService(parameters)
+	err = trackService.Track()
 	if err != nil {
 		log.Fatal(err)
 	} else {
-		fmt.Println("changes", changes)
+		fmt.Println("track commit success")
 	}
+
 }

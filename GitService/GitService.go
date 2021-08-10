@@ -37,13 +37,24 @@ func (s *GitService) GetChanges(commitId string) (GitChanges, error) {
 		return changes, errors.New(errorText)
 	}
 
-	err = json.Unmarshal([]byte(bytes), &changes)
+	err = json.Unmarshal(bytes, &changes)
 	if err != nil {
 		errorText := fmt.Sprintf("parse changes for commit: %v %v", commitId, err.Error())
 		return changes, errors.New(errorText)
 	}
 
 	return changes, nil
+}
+
+// get item
+func (s *GitService) GetItem(itemUrl string) ([]byte, error) {
+	bytes, err := s.getRequest(itemUrl)
+	if err != nil {
+		errorText := fmt.Sprintf("get item: %v %v", itemUrl, err.Error())
+		return nil, errors.New(errorText)
+	}
+
+	return bytes, nil
 }
 
 // get request
