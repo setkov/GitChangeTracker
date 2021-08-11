@@ -1,6 +1,7 @@
 package TrackingService
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -25,6 +26,8 @@ func NewTrackingService(parameters *Common.Parameters) *TrackingService {
 
 // track changes
 func (s *TrackingService) Track() error {
+	fmt.Printf("commitId: %v\n", s.parameters.CommitId)
+
 	changes, err := s.gitService.GetChanges(s.parameters.CommitId)
 	if err != nil {
 		return err
@@ -37,7 +40,7 @@ func (s *TrackingService) Track() error {
 			sqlObject := SqlParser.SqlObject{
 				Path: change.Item.Path,
 			}
-			//fmt.Println(sqlObject.Type(), sqlObject.Name())
+			fmt.Printf("file: %v\n", sqlObject.Path)
 
 			data, err := s.gitService.GetItem(change.Item.Url)
 			if err != nil {
@@ -55,12 +58,14 @@ func (s *TrackingService) Track() error {
 	//fmt.Println(sqlScript)
 
 	// save sql script
-	file, err := os.Create(s.parameters.OutputPath + s.parameters.CommitId + ".sql")
+	fileName := s.parameters.OutputPath + s.parameters.CommitId + ".sql"
+	file, err := os.Create(fileName)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 	file.WriteString(sqlScript)
+	fmt.Printf("save sql script: %v\n", fileName)
 
 	return nil
 }

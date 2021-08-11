@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"os"
 
 	"main.go/Common"
 	"main.go/TrackingService"
@@ -11,14 +11,12 @@ import (
 func main() {
 	parameters, err := Common.NewParameters()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintln(os.Stderr, err)
+	} else {
+		trackService := TrackingService.NewTrackingService(parameters)
+		err = trackService.Track()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
 	}
-
-	trackService := TrackingService.NewTrackingService(parameters)
-	err = trackService.Track()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("track commit success")
 }
