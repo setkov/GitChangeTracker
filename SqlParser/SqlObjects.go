@@ -8,11 +8,11 @@ import (
 type SqlObjectType string
 
 const (
-	Table     SqlObjectType = "T"
-	View      SqlObjectType = "V"
-	Function  SqlObjectType = "F"
-	Procedure SqlObjectType = "P"
-	Other     SqlObjectType = "O"
+	Table     SqlObjectType = "Table"
+	View      SqlObjectType = "View"
+	Function  SqlObjectType = "Function"
+	Procedure SqlObjectType = "Procedure"
+	Other     SqlObjectType = "Other"
 )
 
 type SqlObject struct {
