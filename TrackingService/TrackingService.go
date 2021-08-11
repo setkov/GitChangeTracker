@@ -2,11 +2,11 @@ package TrackingService
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
+	"strings"
 
 	"main.go/Common"
 	"main.go/GitService"
+	"main.go/SqlParser"
 )
 
 // tracking service
@@ -30,15 +30,29 @@ func (s *TrackingService) Track() error {
 		return err
 	}
 
-	err = s.saveChanges(changes)
-	if err != nil {
-		return err
+	// make SqlObject
+	var sqlObjects SqlParser.SqlObjects
+	for _, change := range changes.Changes {
+		if change.Item.GitObjectType == "blob" && strings.HasSuffix(change.Item.Path, ".sql") {
+			sqlObject := SqlParser.SqlObject{
+				Path: change.Item.Path,
+			}
+			fmt.Println(sqlObject.Type(), sqlObject.Name())
+
+			data, err := s.gitService.GetItem(change.Item.Url)
+			if err != nil {
+				return err
+			}
+			sqlObject.Code = string(data)
+
+			sqlObjects.Objects = append(sqlObjects.Objects, sqlObject)
+		}
 	}
 
 	return nil
 }
 
-// save changes
+/* // save changes
 func (s *TrackingService) saveChanges(changes GitService.GitChanges) error {
 	for _, change := range changes.Changes {
 		if change.Item.GitObjectType == "blob" {
@@ -60,4 +74,4 @@ func (s *TrackingService) saveChanges(changes GitService.GitChanges) error {
 	}
 
 	return nil
-}
+} */
