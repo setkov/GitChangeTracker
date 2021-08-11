@@ -1,6 +1,7 @@
 package TrackingService
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"strings"
@@ -46,7 +47,7 @@ func (s *TrackingService) Track() error {
 			if err != nil {
 				return err
 			}
-			sqlObject.Code = string(data)
+			sqlObject.Code = string(bytes.Trim(data, "\xef\xbb\xbf")) // remove BOM marker
 
 			sqlObjects.Objects = append(sqlObjects.Objects, sqlObject)
 		}

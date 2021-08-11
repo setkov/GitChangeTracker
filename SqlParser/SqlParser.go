@@ -21,31 +21,31 @@ func NewSqlParser(sqlObjects *SqlObjects, outputPath string) *SqlParser {
 
 // generate sql script
 func (p *SqlParser) Parse(commitInfo string) string {
-	sqlScript := fmt.Sprintf("-- %v\r\n", commitInfo)
+	sqlScript := fmt.Sprintf("-- %v\n", commitInfo)
 	for _, object := range p.sqlObjects.Objects {
-		sqlScript += fmt.Sprintf("-- file: %v\r\n", string(object.Path))
+		sqlScript += fmt.Sprintf("-- file: %v\n", string(object.Path))
 	}
 
-	sqlScript += "SET XACT_ABORT ON\r\nBEGIN TRAN\r\n"
+	sqlScript += "SET XACT_ABORT ON\nBEGIN TRAN\n"
 	for _, object := range p.sqlObjects.Objects {
 		supported := true
 
 		switch {
 		case object.Type() == View:
-			sqlScript += fmt.Sprintf("IF OBJECT_ID('%v') IS NOT NULL\r\n\tDROP VIEW %v\r\nGO\r\n", object.Name(), object.Name())
+			sqlScript += fmt.Sprintf("IF OBJECT_ID('%v') IS NOT NULL\n\tDROP VIEW %v\nGO\n", object.Name(), object.Name())
 		case object.Type() == Function:
-			sqlScript += fmt.Sprintf("IF OBJECT_ID('%v') IS NOT NULL\r\n\tDROP FUNCTION %v\r\nGO\r\n", object.Name(), object.Name())
+			sqlScript += fmt.Sprintf("IF OBJECT_ID('%v') IS NOT NULL\n\tDROP FUNCTION %v\nGO\n", object.Name(), object.Name())
 		case object.Type() == Procedure:
-			sqlScript += fmt.Sprintf("IF OBJECT_ID('%v') IS NOT NULL\r\n\tDROP PROCEDURE %v\r\nGO\r\n", object.Name(), object.Name())
+			sqlScript += fmt.Sprintf("IF OBJECT_ID('%v') IS NOT NULL\n\tDROP PROCEDURE %v\nGO\n", object.Name(), object.Name())
 		default:
-			sqlScript += fmt.Sprintf("-- %v - object scripting not supported !!!\r\n", object.Name())
+			sqlScript += fmt.Sprintf("-- %v - object scripting not supported !!!\n", object.Name())
 			supported = false
 		}
 		if supported {
-			sqlScript += fmt.Sprintf("%v\r\nGO\r\n", strings.TrimSuffix(strings.TrimSpace(object.Code), "\r\nGO"))
+			sqlScript += fmt.Sprintf("%v\nGO\n", strings.TrimSuffix(strings.TrimSpace(object.Code), "\nGO"))
 		}
 	}
-	sqlScript += "COMMIT TRAN\r\nGO\r\n"
+	sqlScript += "COMMIT TRAN\nGO\n"
 
 	return sqlScript
 }
