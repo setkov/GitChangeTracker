@@ -4,34 +4,10 @@
 GitChangeTracker is a small console tool for tracking MS SQL code. You can use this tool as a step Azure DevOps pipeline. Tool get sql code from git repository and generate sql script for changed objects.
 
 ###### sequence diagram
-```mermaid
-	sequenceDiagram
-	
-	Pipeline->>+TrackingService: commit
-	TrackingService->>+GitService: commit id
-	GitService-->>-TrackingService: changes
-	TrackingService->>+SqlParser: sql objects
-	SqlParser-->>-TrackingService: sql script
-	TrackingService-->>-Pipeline: sql script
-```
+![Sync sequence diagram](https://github.com/setkov/GitChangeTracker/blob/master/SequenceDiagram.png)
 
 ###### data flow diagram
-```mermaid
-	graph TD 
-	
-	d1(pipeline parameters)
-	d2(git repository)
-	p1((GitService))
-	d3[changes]
-	p2((SqlParser))
-	d4[sql script]
-	
-	d1 --> p1
-	d2 --> p1
-	p1 --> d3
-	d3 --> p2
-	p2 --> d4
-```
+![Sync sequence diagram](https://github.com/setkov/GitChangeTracker/blob/master/DataFlowDiagram.png)
 
 ###### build
 ```
