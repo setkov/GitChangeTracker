@@ -1,4 +1,4 @@
-# GitChangeTracker
+## GitChangeTracker
 
 ###### mission
 GitChangeTracker is a small console tool for tracking MS SQL code. You can use this tool as a step Azure DevOps pipeline. Tool get sql code from git repository and generate sql script for changed objects.
