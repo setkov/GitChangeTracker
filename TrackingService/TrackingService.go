@@ -11,6 +11,9 @@ import (
 	"main.go/SqlParser"
 )
 
+// BOM marker
+const BOM = "\xef\xbb\xbf"
+
 // tracking service
 type TrackingService struct {
 	parameters *Common.Parameters
@@ -59,7 +62,7 @@ func (s *TrackingService) Track() error {
 			if err != nil {
 				return err
 			}
-			sqlObject.Code = string(bytes.Trim(data, "\xef\xbb\xbf")) // remove BOM marker
+			sqlObject.Code = string(bytes.Trim(data, BOM)) // remove BOM marker
 
 			sqlObjects.Objects = append(sqlObjects.Objects, sqlObject)
 		}
@@ -77,7 +80,7 @@ func (s *TrackingService) Track() error {
 		return err
 	}
 	defer file.Close()
-	file.WriteString(sqlScript)
+	file.WriteString(BOM + sqlScript) // with BOM marker
 	fmt.Printf("save sql script: %v\n", fileName)
 
 	return nil
