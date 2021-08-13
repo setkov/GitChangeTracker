@@ -29,6 +29,18 @@ func NewTrackingService(parameters *Common.Parameters) *TrackingService {
 func (s *TrackingService) Track() error {
 	fmt.Printf("commitId: %v\n", s.parameters.CommitId)
 
+	// get commit
+	commit, err := s.gitService.GetCommit(s.parameters.CommitId)
+	if err != nil {
+		return err
+	}
+	commitInfo := "Powered by GitChangeTracker (https://github.com/setkov/GitChangeTracker)\n\n"
+	commitInfo += fmt.Sprintf("commit:  %v\n", commit.CommitId)
+	commitInfo += fmt.Sprintf("author:  %v <%v>\n", commit.Author.Name, commit.Author.Email)
+	commitInfo += fmt.Sprintf("date:    %s\n", commit.Author.Date)
+	commitInfo += fmt.Sprintf("comment: %v\n", commit.Comment)
+
+	// get changes
 	changes, err := s.gitService.GetChanges(s.parameters.CommitId)
 	if err != nil {
 		return err
@@ -55,7 +67,7 @@ func (s *TrackingService) Track() error {
 
 	// parse to sql script
 	parser := SqlParser.NewSqlParser(&sqlObjects, s.parameters.OutputPath)
-	sqlScript := parser.Parse("commit: " + s.parameters.CommitId)
+	sqlScript := parser.Parse(commitInfo)
 	//fmt.Println(sqlScript)
 
 	// save sql script

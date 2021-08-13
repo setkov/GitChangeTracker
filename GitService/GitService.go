@@ -25,6 +25,24 @@ func NewGitService(azureDevOpsUri string, repositoryId string, authorizationToke
 	}
 }
 
+// set commit
+func (s *GitService) GetCommit(commitId string) (GitCommit, error) {
+	var commit GitCommit
+
+	requestUrl := fmt.Sprintf("%v/_apis/git/repositories/%v/commits/%v?api-version=5.0", s.azureDevOpsUri, s.repositoryId, commitId)
+	bytes, err := s.getRequest(requestUrl)
+	if err != nil {
+		return commit, err
+	}
+
+	err = json.Unmarshal(bytes, &commit)
+	if err != nil {
+		return commit, err
+	}
+
+	return commit, nil
+}
+
 // get commit changes
 func (s *GitService) GetChanges(commitId string) (GitChanges, error) {
 	var changes GitChanges
