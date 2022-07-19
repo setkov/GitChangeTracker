@@ -2,9 +2,11 @@ package GitService
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"regexp"
 )
 
 // git service
@@ -37,7 +39,12 @@ func (s *GitService) GetCommit(commitId string) (GitCommit, error) {
 
 	err = json.Unmarshal(bytes, &commit)
 	if err != nil {
-		return commit, err
+		// get title from responce
+		re := regexp.MustCompile("<title>(.*?)</title>")
+		match := re.FindStringSubmatch(string(bytes))
+		title := match[1]
+		// return new error
+		return commit, errors.New(err.Error() + " - " + title)
 	}
 
 	return commit, nil
